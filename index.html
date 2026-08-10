@@ -433,10 +433,7 @@ function docRef(){
   return db.collection("caderneta").doc(SHARED_DOC_ID);
 }
 
-let suppressNextSave = false;
-
 function applyRemoteState(data){
-  suppressNextSave = true;
   state = Object.assign({ entries: [], rate: 0.20, childName: "", lastCashout: null }, data || {});
   document.getElementById("childName").value = state.childName || "";
   document.getElementById("rateInput").value = state.rate;
@@ -444,7 +441,6 @@ function applyRemoteState(data){
 }
 
 async function saveState(){
-  if(suppressNextSave){ suppressNextSave = false; return; }
   try{
     await docRef().set(state);
   }catch(e){
