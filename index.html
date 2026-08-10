@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caderneta de Pontos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #E9F1EA;
+    --paper-line: #C9D6C6;
+    --paper-dark: #DCE6DB;
+    --ink: #1F3B32;
+    --ink-soft: #3E5A50;
+    --gold: #C99A2E;
+    --stamp: #C1432E;
+    --blue: #3A5A78;
+    --white: #FBFAF5;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background: var(--paper);
+    background-image: repeating-linear-gradient(var(--paper) 0px, var(--paper) 27px, var(--paper-line) 28px);
+    font-family:'Work Sans', sans-serif;
+    color: var(--ink);
+    min-height:100vh;
+    padding-bottom: 40px;
+  }
+  .wrap{max-width:600px;margin:0 auto;padding:0 16px;}
+
+  /* Capa / header */
+  header.capa{
+    background: var(--ink);
+    color: var(--white);
+    padding: 28px 20px 32px;
+    border-radius: 0 0 22px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  header.capa::before{
+    content:"";
+    position:absolute; inset:0;
+    background: radial-gradient(circle at 85% -10%, rgba(201,154,46,0.25), transparent 55%);
+  }
+  .capa-inner{max-width:600px;margin:0 auto;position:relative;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:#B7CFC5;
+    margin:0 0 4px;
+  }
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    font-size:26px;
+    margin:0 0 18px;
+  }
+  .saldo-row{display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap;}
+  .saldo-block .label{font-size:12px; color:#B7CFC5; font-family:'IBM Plex Mono',monospace; letter-spacing:.08em;}
+  .saldo-block .valor{
+    font-family:'Fraunces', serif;
+    font-weight:700;
+    font-size:44px;
+    line-height:1;
+    position:relative;
+  }
+  .saldo-block .valor.pontos{color:var(--white);}
+  .saldo-block .valor.dinheiro{color:var(--gold); font-size:26px;}
+
+  /* Stamp */
+  .stamp{
+    position:absolute;
+    top:10px; right:10px;
+    border:3px solid var(--stamp);
+    color:var(--stamp);
+    border-radius:50%;
+    width:88px; height:88px;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:600;
+    font-size:13px;
+    line-height:1.15;
+    transform: rotate(-14deg) scale(0);
+    opacity:0;
+    pointer-events:none;
+    background: rgba(193,67,46,0.06);
+  }
+  .stamp.play{ animation: stampIn 900ms cubic-bezier(.2,1.6,.4,1) forwards; }
+  @keyframes stampIn{
+    0%{ transform: rotate(-14deg) scale(2.4); opacity:0; }
+    35%{ opacity:1; }
+    55%{ transform: rotate(-14deg) scale(0.92); opacity:1;}
+    100%{ transform: rotate(-14deg) scale(1); opacity:0.95;}
+  }
+
+  section{margin-top:22px;}
+  h2{
+    font-family:'Fraunces', serif;
+    font-size:17px;
+    font-weight:600;
+    margin: 0 0 10px;
+    display:flex; align-items:center; gap:8px;
+  }
+  h2 .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    background: var(--ink);
+    color: var(--white);
+    padding:2px 7px;
+    border-radius:20px;
+    letter-spacing:.06em;
+  }
+
+  .chips{display:flex; flex-wrap:wrap; gap:8px;}
+  .chip{
+    background: var(--white);
+    border:1px solid var(--paper-line);
+    border-radius:10px;
+    padding:9px 12px;
+    font-size:13.5px;
+    display:flex; align-items:center; gap:8px;
+    cursor:pointer;
+    transition: transform .12s ease, box-shadow .12s ease;
+    box-shadow: 0 1px 0 var(--paper-line);
+  }
+  .chip:active{transform: scale(0.96);}
+  .chip .pts{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:600;
+    color: var(--blue);
+    background: #EAF0F5;
+    padding:2px 6px;
+    border-radius:6px;
+    font-size:12px;
+  }
+  .chip .pts.neg{
+    color: var(--stamp);
+    background: #F5E3DE;
+  }
+
+  .custom-box{
+    background: var(--white);
+    border:1px solid var(--paper-line);
+    border-radius:12px;
+    padding:14px;
+  }
+  .custom-row{display:flex; gap:8px; margin-bottom:10px;}
+  .custom-row input[type=text]{
+    flex:1;
+    border:1px solid var(--paper-line);
+    border-radius:8px;
+    padding:9px 10px;
+    font-family:'Work Sans', sans-serif;
+    font-size:13.5px;
+  }
+  .stepper{display:flex; align-items:center; border:1px solid var(--paper-line); border-radius:8px; overflow:hidden;}
+  .stepper button{
+    border:none; background:var(--paper-dark); width:32px; height:38px; font-size:16px; cursor:pointer; color:var(--ink);
+  }
+  .stepper span{width:34px; text-align:center; font-family:'IBM Plex Mono',monospace; font-weight:600;}
+  .sign-toggle{display:flex; border:1px solid var(--paper-line); border-radius:8px; overflow:hidden;}
+  .sign-toggle button{
+    border:none; background:var(--white); padding:0 12px; font-family:'IBM Plex Mono',monospace; font-weight:600; cursor:pointer; color:var(--ink-soft);
+  }
+  .sign-toggle button.active.plus{background:#E4F0E2; color:#2C6B3F;}
+  .sign-toggle button.active.minus{background:#F5E3DE; color:var(--stamp);}
+  .btn-add{
+    width:100%;
+    background: var(--ink);
+    color: var(--white);
+    border:none;
+    border-radius:8px;
+    padding:11px;
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+  }
+  .btn-add:active{opacity:.85;}
+
+  .ledger{
+    background: var(--white);
+    border:1px solid var(--paper-line);
+    border-radius:12px;
+    overflow:hidden;
+  }
+  .ledger .entry{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:11px 14px;
+    border-bottom:1px solid var(--paper-line);
+    font-size:13.5px;
+    gap:10px;
+  }
+  .ledger .entry:last-child{border-bottom:none;}
+  .entry .desc{flex:1;}
+  .entry .desc .cat{
+    display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft); letter-spacing:.05em; text-transform:uppercase;
+  }
+  .entry .pts{
+    font-family:'IBM Plex Mono', monospace;
+    font-weight:600;
+    white-space:nowrap;
+  }
+  .entry .pts.pos{color:#2C6B3F;}
+  .entry .pts.neg{color:var(--stamp);}
+  .entry .del{
+    background:none; border:none; color:#9AA9A2; cursor:pointer; font-size:15px; padding:0 2px;
+  }
+  .empty-ledger{padding:22px 14px; text-align:center; color:var(--ink-soft); font-size:13.5px;}
+
+  .settings{
+    background: var(--white);
+    border:1px solid var(--paper-line);
+    border-radius:12px;
+    padding:14px;
+  }
+  .settings-row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;}
+  .settings-row label{font-size:13.5px; color:var(--ink-soft);}
+  .settings-row input{
+    width:90px;
+    border:1px solid var(--paper-line);
+    border-radius:8px;
+    padding:7px 9px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13.5px;
+    text-align:right;
+  }
+  .btn-cashout{
+    width:100%;
+    background: var(--gold);
+    color: var(--ink);
+    border:none;
+    border-radius:8px;
+    padding:11px;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+  }
+  .btn-cashout:disabled{opacity:.45; cursor:not-allowed;}
+  .hint{font-size:11.5px; color:var(--ink-soft); margin-top:8px; line-height:1.4;}
+  .name-input{
+    background:transparent; border:none; border-bottom:1px dashed #6E8A80;
+    color:var(--white); font-family:'Fraunces',serif; font-size:15px; padding:2px 0; width:160px;
+  }
+  .name-input::placeholder{color:#9FBBAF;}
+
+  /* Login screen */
+  #loginScreen{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:24px;
+  }
+  #loginScreen h2{
+    font-family:'Fraunces', serif;
+    font-size:24px;
+    margin-bottom:10px;
+  }
+  #loginScreen p{color:var(--ink-soft); font-size:14px; margin-bottom:22px; max-width:320px;}
+  .google-btn{
+    display:flex; align-items:center; gap:10px;
+    background:var(--white);
+    border:1px solid var(--paper-line);
+    border-radius:10px;
+    padding:12px 20px;
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:14px;
+    cursor:pointer;
+    box-shadow:0 1px 0 var(--paper-line);
+  }
+  .google-btn img{width:18px; height:18px;}
+  #appRoot{display:none;}
+  .user-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    max-width:600px; margin:0 auto; padding:8px 16px 0;
+    font-size:12.5px; color:var(--ink-soft);
+  }
+  .user-bar button{
+    background:none; border:none; color:var(--ink-soft); text-decoration:underline; cursor:pointer; font-size:12.5px;
+  }
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<div id="loginScreen">
+  <h2>Caderneta de Pontos</h2>
+  <p>Entre com sua conta Google para ver e registrar os pontos.</p>
+  <button class="google-btn" id="googleLoginBtn">
+    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" alt="">
+    Entrar com Google
+  </button>
+</div>
+
+<div id="appRoot">
+<div class="user-bar">
+  <span id="userEmail"></span>
+  <button id="logoutBtn">Sair</button>
+</div>
+
+<header class="capa">
+  <div class="stamp" id="stamp">GANHOU<br>PONTOS!</div>
+  <div class="capa-inner">
+    <p class="eyebrow">caderneta de pontos</p>
+    <h1>de <input class="name-input" id="childName" placeholder="nome da filha" /></h1>
+    <div class="saldo-row">
+      <div class="saldo-block">
+        <div class="label">SALDO ATUAL</div>
+        <div class="valor pontos" id="saldoPontos">0 pts</div>
+      </div>
+      <div class="saldo-block">
+        <div class="label">EQUIVALE A</div>
+        <div class="valor dinheiro" id="saldoDinheiro">R$ 0,00</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <h2>Casa <span class="tag">tarefas</span></h2>
+    <div class="chips" id="chips-casa"></div>
+  </section>
+
+  <section>
+    <h2>Escola <span class="tag">estudos</span></h2>
+    <div class="chips" id="chips-escola"></div>
+  </section>
+
+  <section>
+    <h2>Comportamento <span class="tag">atitudes</span></h2>
+    <div class="chips" id="chips-comportamento"></div>
+  </section>
+
+  <section>
+    <h2>Adicionar manualmente</h2>
+    <div class="custom-box">
+      <div class="custom-row">
+        <input type="text" id="customDesc" placeholder="Descrição (ex: ajudou o irmão com a tarefa)" />
+      </div>
+      <div class="custom-row">
+        <div class="sign-toggle" id="signToggle">
+          <button type="button" class="plus active" data-sign="1">+</button>
+          <button type="button" class="minus" data-sign="-1">−</button>
+        </div>
+        <div class="stepper">
+          <button type="button" id="stepDown">−</button>
+          <span id="stepVal">5</span>
+          <button type="button" id="stepUp">+</button>
+        </div>
+      </div>
+      <button class="btn-add" id="addCustom">Registrar na caderneta</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Extrato</h2>
+    <div class="ledger" id="ledger">
+      <div class="empty-ledger">Nenhum registro ainda. Carimbe o primeiro ponto acima! ✳</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Configurações</h2>
+    <div class="settings">
+      <div class="settings-row">
+        <label>Valor de cada ponto (R$)</label>
+        <input type="number" id="rateInput" step="0.01" min="0" value="0.20" />
+      </div>
+      <button class="btn-cashout" id="cashoutBtn">Resgatar mesada e zerar pontos</button>
+      <p class="hint" id="lastCashout"></p>
+    </div>
+  </section>
+
+</div>
+</div>
+
+<script>
+const TASKS = {
+  casa: [
+    {label:"Arrumar o quarto", pts:5},
+    {label:"Lavar a louça", pts:5},
+    {label:"Ajudar na cozinha", pts:5},
+    {label:"Tirar o lixo / cuidar do pet", pts:3},
+    {label:"Organizar o armário", pts:8},
+    {label:"Limpar o tênis", pts:4},
+    {label:"Dobrar a roupa", pts:4},
+  ],
+  escola: [
+    {label:"Fazer o dever de casa", pts:1},
+    {label:"Estudar para prova", pts:1},
+    {label:"Nota acima de 80 no boletim", pts:50},
+    {label:"Nota abaixo de 80 no boletim", pts:-10},
+    {label:"Ler um livro / capítulo", pts:5},
+    {label:"Entregar trabalho no prazo", pts:1},
+  ],
+  comportamento: [
+    {label:"Ser educada e gentil", pts:3},
+    {label:"Cumprir combinados sem reclamar", pts:5},
+    {label:"Ajudar a família", pts:5},
+    {label:"Resolver conflito com calma", pts:5},
+    {label:"Respeitar o horário de celular", pts:5},
+  ],
+};
+
+const CAT_LABEL = {casa:"Casa", escola:"Escola", comportamento:"Comportamento", manual:"Manual"};
+
+// ======= CONFIGURAÇÃO DO FIREBASE =======
+// // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyATTRoVAPw4Ng1E6im45ckairXhnLz2ObM",
+  authDomain: "caderneta-pontos.firebaseapp.com",
+  projectId: "caderneta-pontos",
+  storageBucket: "caderneta-pontos.firebasestorage.app",
+  messagingSenderId: "895160415910",
+  appId: "1:895160415910:web:89b7bb48d61de4a118a667"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+// ==========================================
+
+let state = { entries: [], rate: 0.20, childName: "", lastCashout: null };
+let customSign = 1;
+let customStep = 5;
+let currentUser = null;
+
+function docRef(uid){
+  return db.collection("caderneta").doc(uid);
+}
+
+async function loadState(uid){
+  try{
+    const snap = await docRef(uid).get();
+    if(snap.exists){
+      state = Object.assign(state, snap.data());
+    }
+  }catch(e){
+    console.error("Falha ao carregar do Firestore:", e);
+  }
+  document.getElementById("childName").value = state.childName || "";
+  document.getElementById("rateInput").value = state.rate;
+  render();
+}
+
+async function saveState(){
+  if(!currentUser) return;
+  try{
+    await docRef(currentUser.uid).set(state);
+  }catch(e){
+    console.error("Falha ao salvar no Firestore:", e);
+  }
+}
+
+// ======= LOGIN / LOGOUT =======
+document.getElementById("googleLoginBtn").addEventListener("click", ()=>{
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(e=>{
+    console.error(e);
+    alert("Não foi possível entrar: " + e.message);
+  });
+});
+
+document.getElementById("logoutBtn").addEventListener("click", ()=>{
+  auth.signOut();
+});
+
+auth.onAuthStateChanged(user=>{
+  if(user){
+    currentUser = user;
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("appRoot").style.display = "block";
+    document.getElementById("userEmail").textContent = user.email || user.displayName || "";
+    loadState(user.uid);
+  } else {
+    currentUser = null;
+    document.getElementById("loginScreen").style.display = "flex";
+    document.getElementById("appRoot").style.display = "none";
+  }
+});
+
+function totalPontos(){
+  return state.entries.reduce((sum,e)=>sum+e.pts,0);
+}
+
+function render(){
+  const total = totalPontos();
+  document.getElementById("saldoPontos").textContent = total + " pts";
+  document.getElementById("saldoDinheiro").textContent =
+    "R$ " + (total * state.rate).toFixed(2).replace(".", ",");
+
+  document.getElementById("cashoutBtn").disabled = total <= 0;
+
+  if(state.lastCashout){
+    document.getElementById("lastCashout").textContent =
+      "Último resgate: " + state.lastCashout.date + " · R$ " + state.lastCashout.valor.toFixed(2).replace(".", ",");
+  } else {
+    document.getElementById("lastCashout").textContent = "Nenhum resgate ainda.";
+  }
+
+  renderChips();
+  renderLedger();
+}
+
+function renderChips(){
+  Object.keys(TASKS).forEach(cat=>{
+    const el = document.getElementById("chips-"+cat);
+    el.innerHTML = "";
+    TASKS[cat].forEach(t=>{
+      const chip = document.createElement("div");
+      chip.className = "chip";
+      chip.innerHTML = `<span>${t.label}</span><span class="pts${t.pts < 0 ? " neg" : ""}">${t.pts >= 0 ? "+" : ""}${t.pts}</span>`;
+      chip.addEventListener("click", ()=> addEntry(cat, t.label, t.pts));
+      el.appendChild(chip);
+    });
+  });
+}
+
+function renderLedger(){
+  const ledgerEl = document.getElementById("ledger");
+  if(state.entries.length === 0){
+    ledgerEl.innerHTML = '<div class="empty-ledger">Nenhum registro ainda. Carimbe o primeiro ponto acima! ✳</div>';
+    return;
+  }
+  ledgerEl.innerHTML = "";
+  [...state.entries].reverse().forEach(e=>{
+    const row = document.createElement("div");
+    row.className = "entry";
+    const sign = e.pts >= 0 ? "pos" : "neg";
+    row.innerHTML = `
+      <div class="desc"><span class="cat">${CAT_LABEL[e.cat] || "Manual"} · ${e.date}</span>${e.label}</div>
+      <div class="pts ${sign}">${e.pts >= 0 ? "+" : ""}${e.pts}</div>
+      <button class="del" data-id="${e.id}" title="Remover">✕</button>
+    `;
+    row.querySelector(".del").addEventListener("click", ()=> removeEntry(e.id));
+    ledgerEl.appendChild(row);
+  });
+}
+
+function todayStr(){
+  const d = new Date();
+  return d.toLocaleDateString("pt-BR");
+}
+
+function playStamp(){
+  const stamp = document.getElementById("stamp");
+  stamp.classList.remove("play");
+  void stamp.offsetWidth; // restart animation
+  stamp.classList.add("play");
+}
+
+function addEntry(cat, label, pts){
+  state.entries.push({id: Date.now()+Math.random(), cat, label, pts, date: todayStr()});
+  saveState();
+  render();
+  if(pts > 0) playStamp();
+}
+
+function removeEntry(id){
+  state.entries = state.entries.filter(e=> e.id !== id);
+  saveState();
+  render();
+}
+
+document.getElementById("addCustom").addEventListener("click", ()=>{
+  const desc = document.getElementById("customDesc").value.trim();
+  if(!desc) return;
+  const pts = customSign * customStep;
+  addEntry("manual", desc, pts);
+  document.getElementById("customDesc").value = "";
+});
+
+document.getElementById("signToggle").addEventListener("click", (ev)=>{
+  const btn = ev.target.closest("button");
+  if(!btn) return;
+  customSign = parseInt(btn.dataset.sign, 10);
+  document.querySelectorAll("#signToggle button").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+});
+
+document.getElementById("stepUp").addEventListener("click", ()=>{
+  customStep = Math.min(50, customStep+1);
+  document.getElementById("stepVal").textContent = customStep;
+});
+document.getElementById("stepDown").addEventListener("click", ()=>{
+  customStep = Math.max(1, customStep-1);
+  document.getElementById("stepVal").textContent = customStep;
+});
+
+document.getElementById("rateInput").addEventListener("change", (ev)=>{
+  const v = parseFloat(ev.target.value);
+  state.rate = isNaN(v) ? 0 : v;
+  saveState();
+  render();
+});
+
+document.getElementById("childName").addEventListener("change", (ev)=>{
+  state.childName = ev.target.value;
+  saveState();
+});
+
+document.getElementById("cashoutBtn").addEventListener("click", ()=>{
+  const total = totalPontos();
+  if(total <= 0) return;
+  const valor = total * state.rate;
+  if(!confirm(`Resgatar ${total} pontos = R$ ${valor.toFixed(2).replace(".",",")} e zerar o saldo?`)) return;
+  state.entries = [];
+  state.lastCashout = { date: todayStr(), valor };
+  saveState();
+  render();
+});
+
+// O carregamento dos dados agora acontece automaticamente em onAuthStateChanged, acima.
+</script>
+
+</body>
+</html>
