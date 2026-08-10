@@ -296,19 +296,10 @@
 
 <div id="loginScreen">
   <h2>Caderneta de Pontos</h2>
-  <p>Entre com sua conta Google para ver e registrar os pontos.</p>
-  <button class="google-btn" id="googleLoginBtn">
-    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png" alt="">
-    Entrar com Google
-  </button>
+  <p>Carregando...</p>
 </div>
 
 <div id="appRoot">
-<div class="user-bar">
-  <span id="userEmail"></span>
-  <button id="logoutBtn">Sair</button>
-</div>
-
 <header class="capa">
   <div class="stamp" id="stamp">GANHOU<br>PONTOS!</div>
   <div class="capa-inner">
@@ -418,23 +409,14 @@ const TASKS = {
 const CAT_LABEL = {casa:"Casa", escola:"Escola", comportamento:"Comportamento", manual:"Manual"};
 
 // ======= CONFIGURAÇÃO DO FIREBASE =======
-// // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
+// Cole aqui as chaves que você copiou no passo 4 (Firebase Console > Configurações do projeto > Seus apps)
 const firebaseConfig = {
-  apiKey: "AIzaSyATTRoVAPw4Ng1E6im45ckairXhnLz2ObM",
-  authDomain: "caderneta-pontos.firebaseapp.com",
-  projectId: "caderneta-pontos",
-  storageBucket: "caderneta-pontos.firebasestorage.app",
-  messagingSenderId: "895160415910",
-  appId: "1:895160415910:web:89b7bb48d61de4a118a667"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+  apiKey: "COLE_AQUI",
+  authDomain: "COLE_AQUI",
+  projectId: "COLE_AQUI",
+  storageBucket: "COLE_AQUI",
+  messagingSenderId: "COLE_AQUI",
+  appId: "COLE_AQUI"
 };
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
@@ -444,60 +426,56 @@ const db = firebase.firestore();
 let state = { entries: [], rate: 0.20, childName: "", lastCashout: null };
 let customSign = 1;
 let customStep = 5;
-let currentUser = null;
 
-function docRef(uid){
-  return db.collection("caderneta").doc(uid);
+const SHARED_DOC_ID = "familia";
+
+function docRef(){
+  return db.collection("caderneta").doc(SHARED_DOC_ID);
 }
 
-async function loadState(uid){
-  try{
-    const snap = await docRef(uid).get();
-    if(snap.exists){
-      state = Object.assign(state, snap.data());
-    }
-  }catch(e){
-    console.error("Falha ao carregar do Firestore:", e);
-  }
+let suppressNextSave = false;
+
+function applyRemoteState(data){
+  suppressNextSave = true;
+  state = Object.assign({ entries: [], rate: 0.20, childName: "", lastCashout: null }, data || {});
   document.getElementById("childName").value = state.childName || "";
   document.getElementById("rateInput").value = state.rate;
   render();
 }
 
 async function saveState(){
-  if(!currentUser) return;
+  if(suppressNextSave){ suppressNextSave = false; return; }
   try{
-    await docRef(currentUser.uid).set(state);
+    await docRef().set(state);
   }catch(e){
     console.error("Falha ao salvar no Firestore:", e);
   }
 }
 
-// ======= LOGIN / LOGOUT =======
-document.getElementById("googleLoginBtn").addEventListener("click", ()=>{
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).catch(e=>{
-    console.error(e);
-    alert("Não foi possível entrar: " + e.message);
+function startApp(){
+  document.getElementById("loginScreen").style.display = "none";
+  document.getElementById("appRoot").style.display = "block";
+
+  // Sincronização em tempo real: qualquer mudança feita em outro aparelho aparece aqui sozinha
+  docRef().onSnapshot(snap=>{
+    if(snap.exists){
+      applyRemoteState(snap.data());
+    } else {
+      // Primeira vez: cria o documento compartilhado
+      docRef().set(state);
+    }
+  }, err=>{
+    console.error("Erro na sincronização:", err);
   });
-});
+}
 
-document.getElementById("logoutBtn").addEventListener("click", ()=>{
-  auth.signOut();
-});
-
-auth.onAuthStateChanged(user=>{
-  if(user){
-    currentUser = user;
-    document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("appRoot").style.display = "block";
-    document.getElementById("userEmail").textContent = user.email || user.displayName || "";
-    loadState(user.uid);
-  } else {
-    currentUser = null;
-    document.getElementById("loginScreen").style.display = "flex";
-    document.getElementById("appRoot").style.display = "none";
-  }
+// Login anônimo no Firebase só pra satisfazer as regras de segurança do Firestore
+auth.signInAnonymously().then(()=>{
+  startApp();
+}).catch(e=>{
+  console.error("Falha no login anônimo:", e);
+  document.querySelector("#loginScreen p").textContent =
+    "Não foi possível conectar. Verifique se o login anônimo está ativado no Firebase.";
 });
 
 function totalPontos(){
