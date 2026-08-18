@@ -977,6 +977,13 @@ elCover.password.addEventListener("keydown", (ev)=>{
 });
 
 auth.onAuthStateChanged((user)=>{
+  if(user && user.isAnonymous){
+    // sessão anônima antiga, de antes da troca para login por e-mail/senha
+    // (ficou salva no navegador). Não é mais um jeito válido de entrar —
+    // desloga; onAuthStateChanged é chamado de novo em seguida com user=null.
+    auth.signOut();
+    return;
+  }
   if(user){
     loggedIn = true;
     startApp();
