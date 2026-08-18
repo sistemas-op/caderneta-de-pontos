@@ -3,25 +3,30 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Caderneta de Pontos</title>
+<title>Caderno de Pontos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Quicksand:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper: #E9F1EA;
-    --paper-line: #C9D6C6;
-    --paper-dark: #DCE6DB;
-    --ink: #1F3B32;
-    --ink-soft: #3E5A50;
-    --gold: #C99A2E;
-    --stamp: #C1432E;
-    --blue: #3A5A78;
-    --white: #FBFAF5;
+    --paper: #FBF5EC;
+    --paper-line: #E7D9E9;
+    --paper-dark: #F1E6EE;
+    --ink: #4A3457;
+    --ink-soft: #7D6690;
+    --lilac: #5B3E82;
+    --lilac-soft: #EBDCF3;
+    --rose: #A6576A;
+    --rose-soft: #F6E0E5;
+    --wine: #7D4560;
+    --wine-soft: #F0E0E8;
+    --gold: #C9A15A;
+    --gold-soft: #F1E3C4;
+    --white: #FFFFFF;
     --radius-sm: 8px;
     --radius-md: 10px;
     --radius-lg: 12px;
     --radius-xl: 22px;
-    --shadow-card: 0 2px 10px rgba(31,59,50,0.07), 0 1px 0 rgba(31,59,50,0.05);
+    --shadow-card: 0 2px 10px rgba(74,52,87,0.08), 0 1px 0 rgba(74,52,87,0.05);
   }
   *{box-sizing:border-box;}
   body{
@@ -29,9 +34,9 @@
     background-color: var(--paper);
     background-image:
       repeating-linear-gradient(var(--paper) 0px, var(--paper) 27px, var(--paper-line) 28px),
-      radial-gradient(circle at 1px 1px, rgba(31,59,50,0.035) 1px, transparent 0);
+      radial-gradient(circle at 1px 1px, rgba(91,62,130,0.05) 1px, transparent 0);
     background-size: auto, 3px 3px;
-    font-family:'Work Sans', sans-serif;
+    font-family:'Quicksand', sans-serif;
     color: var(--ink);
     min-height:100vh;
     padding-bottom: 40px;
@@ -40,54 +45,74 @@
 
   /* Capa / header */
   header.capa{
-    background: var(--ink);
-    color: var(--white);
-    padding: 28px 20px 32px;
+    background: linear-gradient(180deg, var(--lilac-soft) 0%, var(--paper) 92%);
+    color: var(--ink);
+    padding: 26px 20px 20px;
     border-radius: 0 0 var(--radius-xl) var(--radius-xl);
     position: relative;
     overflow: hidden;
-  }
-  header.capa::before{
-    content:"";
-    position:absolute; inset:0;
-    background: radial-gradient(circle at 85% -10%, rgba(201,154,46,0.25), transparent 55%);
+    text-align: center;
   }
   header.capa::after{
     content:"";
     position:absolute; top:10px; right:10px;
-    width:88px; height:88px;
-    border:1.5px dashed rgba(251,250,245,0.16);
+    width:80px; height:80px;
+    border:1.5px dashed rgba(201,161,90,0.45);
     border-radius:50%;
     transform: rotate(-14deg);
     pointer-events:none;
   }
   .capa-inner{max-width:600px;margin:0 auto;position:relative;}
   .eyebrow{
-    font-family:'IBM Plex Mono', monospace;
-    font-size:11px;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    color:#B7CFC5;
-    margin:0 0 4px;
-    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    display:flex; align-items:center; justify-content:center; gap:10px; flex-wrap:wrap;
+    min-height:14px;
+    margin:0 0 6px;
   }
-  h1{
-    font-family:'Fraunces', serif;
-    font-weight:600;
-    font-size:26px;
+  h1.title{
+    font-family:'Patrick Hand', cursive;
+    font-weight:400;
+    font-size:clamp(34px, 9vw, 44px);
+    color: var(--lilac);
+    margin:0 0 10px;
+    line-height:1;
+  }
+  .name-badge{
+    display:inline-flex; align-items:center; gap:6px;
+    background: var(--paper);
+    border:2px dashed var(--gold);
+    border-radius:20px;
+    padding:4px 8px 4px 16px;
     margin:0 0 18px;
   }
-  .saldo-row{display:flex; align-items:flex-end; justify-content:space-between; gap:12px; flex-wrap:wrap;}
-  .saldo-block .label{font-size:12px; color:#B7CFC5; font-family:'IBM Plex Mono',monospace; letter-spacing:.08em;}
+  .name-badge .lbl{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color: var(--ink-soft);
+  }
+  .saldo-card{
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--paper-line);
+    padding: 14px 16px;
+  }
+  .saldo-row{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;}
+  .saldo-block{ text-align:left; }
+  .saldo-block .label{
+    font-size:10px; color: var(--ink-soft); font-family:'IBM Plex Mono',monospace; letter-spacing:.08em; text-transform:uppercase;
+    display:flex; align-items:center; gap:4px;
+  }
   .saldo-block .valor{
-    font-family:'Fraunces', serif;
+    font-family:'Quicksand', sans-serif;
     font-weight:700;
-    line-height:1;
+    line-height:1.2;
     position:relative;
     transition: color .2s ease;
   }
-  .saldo-block .valor.pontos{color:var(--white); font-size:clamp(32px, 9vw, 44px);}
-  .saldo-block .valor.dinheiro{color:var(--gold); font-size:clamp(20px, 5vw, 26px);}
+  .saldo-block .valor.pontos{color:var(--lilac); font-size:clamp(30px, 8vw, 38px);}
+  .saldo-block .valor.dinheiro{color:var(--rose); font-size:clamp(19px, 5vw, 24px);}
   .valor.pulse{ animation: valuePulse .35s ease; }
   @keyframes valuePulse{
     0%{ transform:scale(1); }
@@ -95,51 +120,51 @@
     100%{ transform:scale(1); }
   }
   .saldo-eq{
-    font-family:'Fraunces', serif;
-    font-size:18px;
-    color:#7C9A8E;
-    padding-bottom:8px;
+    font-family:'Patrick Hand', cursive;
+    font-size:22px;
+    color: var(--gold);
+    padding-bottom:2px;
   }
 
   /* Save status */
   .save-status{
     display:inline-flex; align-items:center; gap:6px;
+    font-family:'IBM Plex Mono', monospace;
     font-size:10.5px;
     letter-spacing:.04em;
-    color:#B7CFC5;
+    color: var(--ink-soft);
     opacity:0;
     transition: opacity .35s ease;
   }
   .save-status.show{ opacity:1; }
   .save-status .dot{
     width:6px; height:6px; border-radius:50%;
-    background:#B7CFC5;
+    background: var(--ink-soft);
     flex-shrink:0;
   }
   .save-status.saving .dot{ background:var(--gold); animation: pulseDot 1s ease-in-out infinite; }
-  .save-status.saved .dot{ background:#7FC79A; }
-  .save-status.error{ color:#E8B4A8; }
-  .save-status.error .dot{ background:var(--stamp); }
+  .save-status.saved .dot{ background:var(--rose); }
+  .save-status.error{ color: var(--wine); }
+  .save-status.error .dot{ background:var(--wine); }
   @keyframes pulseDot{ 0%,100%{opacity:1;} 50%{opacity:.35;} }
 
   /* Stamp */
   .stamp{
     position:absolute;
     top:10px; right:10px;
-    border:3px solid var(--stamp);
-    color:var(--stamp);
+    border:3px solid var(--gold);
+    color:var(--gold);
     border-radius:50%;
-    width:88px; height:88px;
+    width:80px; height:80px;
     display:flex; align-items:center; justify-content:center;
     text-align:center;
-    font-family:'IBM Plex Mono', monospace;
-    font-weight:600;
-    font-size:13px;
+    font-family:'Patrick Hand', cursive;
+    font-size:15px;
     line-height:1.15;
     transform: rotate(-14deg) scale(0);
     opacity:0;
     pointer-events:none;
-    background: rgba(193,67,46,0.06);
+    background: rgba(201,161,90,0.08);
   }
   .stamp.play{ animation: stampIn 900ms cubic-bezier(.2,1.6,.4,1) forwards; }
   @keyframes stampIn{
@@ -151,16 +176,18 @@
 
   section{margin-top:22px;}
   h2{
-    font-family:'Fraunces', serif;
-    font-size:17px;
-    font-weight:600;
+    font-family:'Patrick Hand', cursive;
+    font-size:20px;
+    font-weight:400;
+    color: var(--lilac);
     margin: 0 0 10px;
     display:flex; align-items:center; gap:8px;
   }
   h2 .tag{
     font-family:'IBM Plex Mono', monospace;
     font-size:10px;
-    background: var(--ink);
+    font-weight:600;
+    background: var(--lilac);
     color: var(--white);
     padding:2px 7px;
     border-radius:20px;
@@ -179,20 +206,20 @@
     transition: transform .12s ease, box-shadow .12s ease;
     box-shadow: 0 1px 0 var(--paper-line);
   }
-  .chip:hover{ box-shadow: 0 3px 8px rgba(31,59,50,0.10); transform: translateY(-1px); }
+  .chip:hover{ box-shadow: 0 3px 8px rgba(74,52,87,0.12); transform: translateY(-1px); }
   .chip:active{transform: scale(0.96);}
   .chip .pts{
     font-family:'IBM Plex Mono', monospace;
     font-weight:600;
-    color: var(--blue);
-    background: #EAF0F5;
+    color: var(--rose);
+    background: var(--rose-soft);
     padding:2px 6px;
     border-radius:6px;
     font-size:12px;
   }
   .chip .pts.neg{
-    color: var(--stamp);
-    background: #F5E3DE;
+    color: var(--wine);
+    background: var(--wine-soft);
   }
 
   .custom-box{
@@ -208,29 +235,29 @@
     border:1px solid var(--paper-line);
     border-radius:var(--radius-sm);
     padding:9px 10px;
-    font-family:'Work Sans', sans-serif;
+    font-family:'Quicksand', sans-serif;
     font-size:13.5px;
   }
   .stepper{display:flex; align-items:center; border:1px solid var(--paper-line); border-radius:var(--radius-sm); overflow:hidden;}
   .stepper button{
-    border:none; background:var(--paper-dark); width:32px; height:38px; font-size:16px; cursor:pointer; color:var(--ink);
+    border:none; background:var(--paper-dark); width:32px; height:38px; font-size:16px; cursor:pointer; color:var(--lilac);
   }
-  .stepper span{width:34px; text-align:center; font-family:'IBM Plex Mono',monospace; font-weight:600;}
+  .stepper span{width:34px; text-align:center; font-family:'IBM Plex Mono',monospace; font-weight:600; color:var(--ink);}
   .sign-toggle{display:flex; border:1px solid var(--paper-line); border-radius:var(--radius-sm); overflow:hidden;}
   .sign-toggle button{
     border:none; background:var(--white); padding:0 12px; font-family:'IBM Plex Mono',monospace; font-weight:600; cursor:pointer; color:var(--ink-soft);
   }
-  .sign-toggle button.active.plus{background:#E4F0E2; color:#2C6B3F;}
-  .sign-toggle button.active.minus{background:#F5E3DE; color:var(--stamp);}
+  .sign-toggle button.active.plus{background:var(--rose-soft); color:var(--rose);}
+  .sign-toggle button.active.minus{background:var(--wine-soft); color:var(--wine);}
   .btn-add{
     width:100%;
-    background: var(--ink);
+    background: var(--lilac);
     color: var(--white);
     border:none;
     border-radius:var(--radius-sm);
     padding:11px;
-    font-family:'Work Sans', sans-serif;
-    font-weight:600;
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
     font-size:14px;
     cursor:pointer;
     transition: opacity .12s ease, transform .12s ease;
@@ -261,13 +288,13 @@
     font-weight:600;
     white-space:nowrap;
   }
-  .pts.pos{color:#2C6B3F;}
-  .pts.neg{color:var(--stamp);}
+  .pts.pos{color:var(--rose);}
+  .pts.neg{color:var(--wine);}
   .entry .del{
-    background:none; border:none; color:#9AA9A2; cursor:pointer; font-size:15px; padding:0 2px;
+    background:none; border:none; color:#B8A7BE; cursor:pointer; font-size:15px; padding:0 2px;
     transition: color .12s ease;
   }
-  .entry .del:hover{ color: var(--stamp); }
+  .entry .del:hover{ color: var(--wine); }
   .empty-ledger{padding:22px 14px; text-align:center; color:var(--ink-soft); font-size:13.5px;}
 
   @keyframes entryIn{
@@ -304,10 +331,10 @@
     display:flex; align-items:center; gap:10px; flex-shrink:0;
   }
   .cashout-card summary .del-cashout{
-    background:none; border:none; color:#9AA9A2; cursor:pointer; font-size:14px; padding:0 2px;
+    background:none; border:none; color:#B8A7BE; cursor:pointer; font-size:14px; padding:0 2px;
     transition: color .12s ease;
   }
-  .cashout-card summary .del-cashout:hover{ color: var(--stamp); }
+  .cashout-card summary .del-cashout:hover{ color: var(--wine); }
   .cashout-card summary .arrow{
     color: var(--ink-soft);
     transition: transform .2s ease;
@@ -348,7 +375,7 @@
     border:none;
     border-radius:var(--radius-sm);
     padding:11px;
-    font-weight:600;
+    font-weight:700;
     font-size:14px;
     cursor:pointer;
     transition: opacity .12s ease, transform .12s ease;
@@ -357,10 +384,11 @@
   .btn-cashout:disabled{opacity:.45; cursor:not-allowed;}
   .hint{font-size:11.5px; color:var(--ink-soft); margin-top:8px; line-height:1.4;}
   .name-input{
-    background:transparent; border:none; border-bottom:1px dashed #6E8A80;
-    color:var(--white); font-family:'Fraunces',serif; font-size:15px; padding:2px 0; width:clamp(110px, 40vw, 160px);
+    background:transparent; border:none;
+    color: var(--lilac); font-family:'Patrick Hand', cursive; font-size:20px; padding:2px 0; width:clamp(110px, 40vw, 160px);
+    text-align:center;
   }
-  .name-input::placeholder{color:#9FBBAF;}
+  .name-input::placeholder{color:#B8A7BE;}
 
   /* Login screen */
   #loginScreen{
@@ -375,39 +403,20 @@
   }
   #loginScreen.fade-out{ opacity:0; }
   #loginScreen h2{
-    font-family:'Fraunces', serif;
-    font-size:24px;
+    font-family:'Patrick Hand', cursive;
+    font-weight:400;
+    font-size:30px;
+    color: var(--lilac);
     margin-bottom:10px;
   }
   #loginScreen p{color:var(--ink-soft); font-size:14px; margin-bottom:22px; max-width:320px;}
-  .google-btn{
-    display:flex; align-items:center; gap:10px;
-    background:var(--white);
-    border:1px solid var(--paper-line);
-    border-radius:var(--radius-md);
-    padding:12px 20px;
-    font-family:'Work Sans', sans-serif;
-    font-weight:600;
-    font-size:14px;
-    cursor:pointer;
-    box-shadow:0 1px 0 var(--paper-line);
-  }
-  .google-btn img{width:18px; height:18px;}
   #appRoot{display:none; opacity:0; transition: opacity .35s ease;}
   #appRoot.visible{ opacity:1; }
-  .user-bar{
-    display:flex; align-items:center; justify-content:space-between;
-    max-width:600px; margin:0 auto; padding:8px 16px 0;
-    font-size:12.5px; color:var(--ink-soft);
-  }
-  .user-bar button{
-    background:none; border:none; color:var(--ink-soft); text-decoration:underline; cursor:pointer; font-size:12.5px;
-  }
 
   @media (max-width:380px){
-    header.capa{ padding:22px 16px 26px; }
-    h1{ font-size:22px; }
-    .stamp, header.capa::after{ width:70px; height:70px; }
+    header.capa{ padding:20px 16px 16px; }
+    h1.title{ font-size:30px; }
+    .stamp, header.capa::after{ width:66px; height:66px; }
   }
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -417,7 +426,7 @@
 <body>
 
 <div id="loginScreen">
-  <h2>Caderneta de Pontos</h2>
+  <h2>Caderno de Pontos</h2>
   <p>Carregando...</p>
 </div>
 
@@ -426,19 +435,24 @@
   <div class="stamp" id="stamp">GANHOU<br>PONTOS!</div>
   <div class="capa-inner">
     <p class="eyebrow">
-      caderneta de pontos
       <span class="save-status" id="saveStatus"><span class="dot"></span><span class="txt"></span></span>
     </p>
-    <h1>de <input class="name-input" id="childName" placeholder="nome da filha" /></h1>
-    <div class="saldo-row">
-      <div class="saldo-block">
-        <div class="label">SALDO ATUAL</div>
-        <div class="valor pontos" id="saldoPontos">0 pts</div>
-      </div>
-      <span class="saldo-eq" aria-hidden="true">≈</span>
-      <div class="saldo-block">
-        <div class="label">EQUIVALE A</div>
-        <div class="valor dinheiro" id="saldoDinheiro">R$ 0,00</div>
+    <h1 class="title">Caderno de Pontos</h1>
+    <div class="name-badge">
+      <span class="lbl">de</span>
+      <input class="name-input" id="childName" placeholder="nome da filha" />
+    </div>
+    <div class="saldo-card">
+      <div class="saldo-row">
+        <div class="saldo-block">
+          <div class="label">✦ SALDO ATUAL</div>
+          <div class="valor pontos" id="saldoPontos">0 pts</div>
+        </div>
+        <span class="saldo-eq" aria-hidden="true">≈</span>
+        <div class="saldo-block" style="text-align:right">
+          <div class="label" style="justify-content:flex-end">EQUIVALE A</div>
+          <div class="valor dinheiro" id="saldoDinheiro">R$ 0,00</div>
+        </div>
       </div>
     </div>
   </div>
