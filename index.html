@@ -390,26 +390,96 @@
   }
   .name-input::placeholder{color:#B8A7BE;}
 
-  /* Login screen */
-  #loginScreen{
+  /* Capa de caderno / PIN */
+  #coverScreen{
     min-height:100vh;
     display:flex;
-    flex-direction:column;
     align-items:center;
     justify-content:center;
-    text-align:center;
     padding:24px;
-    transition: opacity .3s ease;
+    perspective:1400px;
   }
-  #loginScreen.fade-out{ opacity:0; }
-  #loginScreen h2{
+  .cover-page{
+    width:100%;
+    max-width:380px;
+    background: var(--white);
+    border:1px solid var(--paper-line);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 16px 40px rgba(74,52,87,0.18);
+    padding:40px 28px 34px;
+    text-align:center;
+    transform-style: preserve-3d;
+    transform-origin: left center;
+    backface-visibility: hidden;
+    transition: transform .75s cubic-bezier(.55,0,.1,1), opacity .5s ease .2s;
+  }
+  .cover-page.opening{ transform: rotateY(-100deg); opacity:0; }
+  .cover-title{
     font-family:'Patrick Hand', cursive;
     font-weight:400;
-    font-size:30px;
+    font-size:clamp(34px, 9vw, 42px);
+    line-height:1.05;
     color: var(--lilac);
-    margin-bottom:10px;
+    margin:0 0 18px;
   }
-  #loginScreen p{color:var(--ink-soft); font-size:14px; margin-bottom:22px; max-width:320px;}
+  .cover-illus{ width:100%; max-width:230px; height:auto; margin-bottom:14px; }
+  .pin-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color: var(--ink-soft);
+    margin-bottom:10px;
+    transition: color .2s ease;
+  }
+  .pin-input{
+    display:block;
+    margin:0 auto 4px;
+    width:140px;
+    border:none;
+    border-bottom:2px dashed var(--gold);
+    background:transparent;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:26px;
+    letter-spacing:.5em;
+    text-align:center;
+    color: var(--lilac);
+    padding:4px 0;
+  }
+  .pin-input:focus{ outline:none; border-bottom-color: var(--rose); }
+  .pin-input:disabled{ opacity:.5; }
+  .pin-input.shake{ animation: pinShake .5s; }
+  @keyframes pinShake{
+    10%,90%{transform:translateX(-2px);}
+    20%,80%{transform:translateX(4px);}
+    30%,50%,70%{transform:translateX(-8px);}
+    40%,60%{transform:translateX(8px);}
+  }
+  .pin-feedback{
+    font-family:'Quicksand',sans-serif;
+    font-size:12px;
+    font-weight:600;
+    color: var(--wine);
+    min-height:16px;
+    margin:6px 0 14px;
+    opacity:0;
+    transition: opacity .25s ease;
+  }
+  .pin-feedback.show{ opacity:1; }
+  .btn-cover{
+    background: var(--gold);
+    color: var(--ink);
+    border:none;
+    border-radius: var(--radius-sm);
+    padding:11px 26px;
+    font-family:'Quicksand', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    transition: opacity .12s ease, transform .12s ease;
+  }
+  .btn-cover:active{ transform: scale(0.98); }
+
   #appRoot{display:none; opacity:0; transition: opacity .35s ease;}
   #appRoot.visible{ opacity:1; }
 
@@ -425,9 +495,48 @@
 </head>
 <body>
 
-<div id="loginScreen">
-  <h2>Caderno de Pontos</h2>
-  <p>Carregando...</p>
+<div id="coverScreen">
+  <div class="cover-page" id="coverPage">
+    <h1 class="cover-title">Caderno<br>de Pontos</h1>
+    <svg class="cover-illus" viewBox="0 0 220 150" aria-hidden="true">
+      <g transform="translate(45,100)">
+        <line x1="0" y1="0" x2="0" y2="40" stroke="#5B3E82" stroke-width="2"/>
+        <circle cx="0" cy="-10" r="7" fill="#A6576A"/>
+        <circle cx="-10" cy="-2" r="7" fill="#A6576A"/>
+        <circle cx="10" cy="-2" r="7" fill="#A6576A"/>
+        <circle cx="-6" cy="8" r="7" fill="#A6576A"/>
+        <circle cx="6" cy="8" r="7" fill="#A6576A"/>
+        <circle cx="0" cy="0" r="5" fill="#C9A15A"/>
+        <path d="M0 30 Q -12 34 -14 24" fill="none" stroke="#5B3E82" stroke-width="2"/>
+      </g>
+      <g transform="translate(110,90)">
+        <line x1="0" y1="0" x2="0" y2="55" stroke="#5B3E82" stroke-width="2"/>
+        <circle cx="0" cy="-12" r="9" fill="#5B3E82" opacity="0.85"/>
+        <circle cx="-12" cy="-2" r="9" fill="#5B3E82" opacity="0.85"/>
+        <circle cx="12" cy="-2" r="9" fill="#5B3E82" opacity="0.85"/>
+        <circle cx="-7" cy="10" r="9" fill="#5B3E82" opacity="0.85"/>
+        <circle cx="7" cy="10" r="9" fill="#5B3E82" opacity="0.85"/>
+        <circle cx="0" cy="0" r="6" fill="#C9A15A"/>
+        <path d="M0 40 Q 14 44 16 32" fill="none" stroke="#5B3E82" stroke-width="2"/>
+      </g>
+      <g transform="translate(175,105)">
+        <line x1="0" y1="0" x2="0" y2="35" stroke="#5B3E82" stroke-width="2"/>
+        <circle cx="0" cy="-9" r="6" fill="#A6576A"/>
+        <circle cx="-9" cy="-2" r="6" fill="#A6576A"/>
+        <circle cx="9" cy="-2" r="6" fill="#A6576A"/>
+        <circle cx="-5" cy="7" r="6" fill="#A6576A"/>
+        <circle cx="5" cy="7" r="6" fill="#A6576A"/>
+        <circle cx="0" cy="0" r="4" fill="#C9A15A"/>
+      </g>
+      <path d="M15 140 Q110 148 205 140" fill="none" stroke="#5B3E82" stroke-width="1.6" opacity="0.4"/>
+    </svg>
+    <div class="pin-area">
+      <div class="pin-label" id="pinLabel">Digite o PIN</div>
+      <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" id="pinInput" class="pin-input" autocomplete="off" placeholder="••••" />
+      <div class="pin-feedback" id="pinFeedback">PIN incorreto</div>
+      <button type="button" class="btn-cover" id="pinSubmit">Abrir caderno</button>
+    </div>
+  </div>
 </div>
 
 <div id="appRoot">
@@ -492,7 +601,7 @@
           <button type="button" id="stepUp">+</button>
         </div>
       </div>
-      <button class="btn-add" id="addCustom">Registrar na caderneta</button>
+      <button class="btn-add" id="addCustom">Registrar no caderno</button>
     </div>
   </section>
 
@@ -574,6 +683,11 @@ const TASKS = {
 
 const CAT_LABEL = {casa:"Casa", escola:"Escola", comportamento:"Comportamento", manual:"Manual"};
 
+// PIN da capa — é só uma trava de conveniência da família (não é segurança
+// de verdade: qualquer pessoa que veja o código-fonte consegue ler o valor
+// abaixo). Para trocar, edite os 4 dígitos aqui.
+const COVER_PIN = "0000";
+
 // ======= CONFIGURAÇÃO DO FIREBASE =======
 const firebaseConfig = {
   apiKey: "AIzaSyATTRoVAPw4Ng1E6im45ckairXhnLz2ObM",
@@ -601,7 +715,6 @@ let lastRenderedTotal = null;
 let firstRender = true;
 
 const el = {
-  loginScreen: document.getElementById("loginScreen"),
   appRoot: document.getElementById("appRoot"),
   stamp: document.getElementById("stamp"),
   saveStatus: document.getElementById("saveStatus"),
@@ -624,6 +737,15 @@ const el = {
   cashoutHint: document.getElementById("cashoutHint"),
   rateInput: document.getElementById("rateInput"),
   cashoutBtn: document.getElementById("cashoutBtn"),
+};
+
+const elCover = {
+  screen: document.getElementById("coverScreen"),
+  page: document.getElementById("coverPage"),
+  label: document.getElementById("pinLabel"),
+  input: document.getElementById("pinInput"),
+  feedback: document.getElementById("pinFeedback"),
+  submit: document.getElementById("pinSubmit"),
 };
 
 function makeId(){
@@ -744,16 +866,15 @@ function migrateLastCashout(lastCashout){
 }
 
 function startApp(){
-  el.loginScreen.classList.add("fade-out");
-  setTimeout(()=>{ el.loginScreen.style.display = "none"; }, 300);
-  el.appRoot.style.display = "block";
-  requestAnimationFrame(()=> el.appRoot.classList.add("visible"));
-
   docRef().onSnapshot(snap=>{
     if(snap.exists){
       applyRemoteState(snap.data());
     } else {
       docRef().set(state);
+    }
+    if(!dataReady){
+      dataReady = true;
+      tryReveal(true);
     }
   }, err=>{
     console.error("Erro na sincronização:", err);
@@ -765,9 +886,72 @@ auth.signInAnonymously().then(()=>{
   startApp();
 }).catch(e=>{
   console.error("Falha no login anônimo:", e);
-  document.querySelector("#loginScreen p").textContent =
-    "Não foi possível conectar. Verifique se o login anônimo está ativado no Firebase.";
+  elCover.feedback.textContent = "Não foi possível conectar. Tente recarregar a página.";
+  elCover.feedback.classList.add("show");
 });
+
+// =========================================================
+// CAPA / PIN
+// =========================================================
+let dataReady = false;
+let pinVerified = (sessionStorage.getItem("pinOk") === "1");
+let revealed = false;
+let pinFeedbackTimer = null;
+
+if(pinVerified){
+  // já foi aberto nesta sessão do navegador — pula a capa sem animação
+  elCover.screen.style.display = "none";
+}
+
+function tryReveal(animate){
+  if(revealed || !dataReady || !pinVerified) return;
+  revealed = true;
+  if(animate && elCover.screen.style.display !== "none"){
+    elCover.page.classList.add("opening");
+    setTimeout(finishReveal, 750);
+  } else {
+    finishReveal();
+  }
+}
+
+function finishReveal(){
+  elCover.screen.style.display = "none";
+  el.appRoot.style.display = "block";
+  requestAnimationFrame(()=> el.appRoot.classList.add("visible"));
+}
+
+function checkPin(){
+  const value = elCover.input.value;
+  if(value.length < 4) return;
+  if(value === COVER_PIN){
+    pinVerified = true;
+    sessionStorage.setItem("pinOk", "1");
+    if(!dataReady){
+      elCover.label.textContent = "Abrindo…";
+      elCover.input.disabled = true;
+    }
+    tryReveal(true);
+  } else {
+    wrongPin();
+  }
+}
+
+function wrongPin(){
+  elCover.input.value = "";
+  elCover.input.classList.remove("shake");
+  void elCover.input.offsetWidth; // reinicia a animação
+  elCover.input.classList.add("shake");
+  elCover.feedback.textContent = "PIN incorreto";
+  elCover.feedback.classList.add("show");
+  clearTimeout(pinFeedbackTimer);
+  pinFeedbackTimer = setTimeout(()=> elCover.feedback.classList.remove("show"), 1800);
+}
+
+elCover.input.addEventListener("input", checkPin);
+elCover.input.addEventListener("keydown", (ev)=>{
+  if(ev.key === "Enter") checkPin();
+});
+elCover.submit.addEventListener("click", checkPin);
 
 // =========================================================
 // RENDER
