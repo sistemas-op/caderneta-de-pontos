@@ -79,13 +79,20 @@
     margin:0 0 10px;
     line-height:1;
   }
+  .header-flowers{
+    display:block;
+    width:150px;
+    max-width:60%;
+    height:auto;
+    margin:4px auto 0;
+  }
   .name-badge{
     display:inline-flex; align-items:center; gap:6px;
     background: var(--paper);
     border:2px dashed var(--gold);
     border-radius:20px;
     padding:4px 8px 4px 16px;
-    margin:0 0 18px;
+    margin:8px 0 18px;
   }
   .name-badge .lbl{
     font-family:'IBM Plex Mono', monospace;
@@ -571,6 +578,36 @@
       <span class="save-status" id="saveStatus"><span class="dot"></span><span class="txt"></span></span>
     </p>
     <h1 class="title">Caderno de Pontos</h1>
+    <svg class="header-flowers" viewBox="0 0 220 90" aria-hidden="true">
+      <g transform="translate(45,50)">
+        <line x1="0" y1="0" x2="0" y2="22" stroke="#5B3E82" stroke-width="1.6"/>
+        <circle cx="0" cy="-6" r="5" fill="#A6576A"/>
+        <circle cx="-6" cy="-1" r="5" fill="#A6576A"/>
+        <circle cx="6" cy="-1" r="5" fill="#A6576A"/>
+        <circle cx="-4" cy="5" r="5" fill="#A6576A"/>
+        <circle cx="4" cy="5" r="5" fill="#A6576A"/>
+        <circle cx="0" cy="0" r="3.5" fill="#C9A15A"/>
+      </g>
+      <g transform="translate(110,42)">
+        <line x1="0" y1="0" x2="0" y2="30" stroke="#5B3E82" stroke-width="1.6"/>
+        <circle cx="0" cy="-7" r="6" fill="#5B3E82" opacity="0.85"/>
+        <circle cx="-7" cy="-1" r="6" fill="#5B3E82" opacity="0.85"/>
+        <circle cx="7" cy="-1" r="6" fill="#5B3E82" opacity="0.85"/>
+        <circle cx="-4" cy="6" r="6" fill="#5B3E82" opacity="0.85"/>
+        <circle cx="4" cy="6" r="6" fill="#5B3E82" opacity="0.85"/>
+        <circle cx="0" cy="0" r="4" fill="#C9A15A"/>
+      </g>
+      <g transform="translate(175,48)">
+        <line x1="0" y1="0" x2="0" y2="24" stroke="#5B3E82" stroke-width="1.6"/>
+        <circle cx="0" cy="-6" r="4.5" fill="#A6576A"/>
+        <circle cx="-5.5" cy="-1" r="4.5" fill="#A6576A"/>
+        <circle cx="5.5" cy="-1" r="4.5" fill="#A6576A"/>
+        <circle cx="-3" cy="5" r="4.5" fill="#A6576A"/>
+        <circle cx="3" cy="5" r="4.5" fill="#A6576A"/>
+        <circle cx="0" cy="0" r="3" fill="#C9A15A"/>
+      </g>
+      <path d="M15 82 Q110 88 205 82" fill="none" stroke="#5B3E82" stroke-width="1.2" opacity="0.35"/>
+    </svg>
     <div class="name-badge">
       <span class="lbl">de</span>
       <input class="name-input" id="childName" placeholder="nome da filha" />
