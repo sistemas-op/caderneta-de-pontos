@@ -17,12 +17,20 @@
     --stamp: #C1432E;
     --blue: #3A5A78;
     --white: #FBFAF5;
+    --radius-sm: 8px;
+    --radius-md: 10px;
+    --radius-lg: 12px;
+    --radius-xl: 22px;
+    --shadow-card: 0 2px 10px rgba(31,59,50,0.07), 0 1px 0 rgba(31,59,50,0.05);
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
-    background: var(--paper);
-    background-image: repeating-linear-gradient(var(--paper) 0px, var(--paper) 27px, var(--paper-line) 28px);
+    background-color: var(--paper);
+    background-image:
+      repeating-linear-gradient(var(--paper) 0px, var(--paper) 27px, var(--paper-line) 28px),
+      radial-gradient(circle at 1px 1px, rgba(31,59,50,0.035) 1px, transparent 0);
+    background-size: auto, 3px 3px;
     font-family:'Work Sans', sans-serif;
     color: var(--ink);
     min-height:100vh;
@@ -35,7 +43,7 @@
     background: var(--ink);
     color: var(--white);
     padding: 28px 20px 32px;
-    border-radius: 0 0 22px 22px;
+    border-radius: 0 0 var(--radius-xl) var(--radius-xl);
     position: relative;
     overflow: hidden;
   }
@@ -43,6 +51,15 @@
     content:"";
     position:absolute; inset:0;
     background: radial-gradient(circle at 85% -10%, rgba(201,154,46,0.25), transparent 55%);
+  }
+  header.capa::after{
+    content:"";
+    position:absolute; top:10px; right:10px;
+    width:88px; height:88px;
+    border:1.5px dashed rgba(251,250,245,0.16);
+    border-radius:50%;
+    transform: rotate(-14deg);
+    pointer-events:none;
   }
   .capa-inner{max-width:600px;margin:0 auto;position:relative;}
   .eyebrow{
@@ -52,6 +69,7 @@
     text-transform:uppercase;
     color:#B7CFC5;
     margin:0 0 4px;
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
   }
   h1{
     font-family:'Fraunces', serif;
@@ -64,12 +82,45 @@
   .saldo-block .valor{
     font-family:'Fraunces', serif;
     font-weight:700;
-    font-size:44px;
     line-height:1;
     position:relative;
+    transition: color .2s ease;
   }
-  .saldo-block .valor.pontos{color:var(--white);}
-  .saldo-block .valor.dinheiro{color:var(--gold); font-size:26px;}
+  .saldo-block .valor.pontos{color:var(--white); font-size:clamp(32px, 9vw, 44px);}
+  .saldo-block .valor.dinheiro{color:var(--gold); font-size:clamp(20px, 5vw, 26px);}
+  .valor.pulse{ animation: valuePulse .35s ease; }
+  @keyframes valuePulse{
+    0%{ transform:scale(1); }
+    35%{ transform:scale(1.07); }
+    100%{ transform:scale(1); }
+  }
+  .saldo-eq{
+    font-family:'Fraunces', serif;
+    font-size:18px;
+    color:#7C9A8E;
+    padding-bottom:8px;
+  }
+
+  /* Save status */
+  .save-status{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:10.5px;
+    letter-spacing:.04em;
+    color:#B7CFC5;
+    opacity:0;
+    transition: opacity .35s ease;
+  }
+  .save-status.show{ opacity:1; }
+  .save-status .dot{
+    width:6px; height:6px; border-radius:50%;
+    background:#B7CFC5;
+    flex-shrink:0;
+  }
+  .save-status.saving .dot{ background:var(--gold); animation: pulseDot 1s ease-in-out infinite; }
+  .save-status.saved .dot{ background:#7FC79A; }
+  .save-status.error{ color:#E8B4A8; }
+  .save-status.error .dot{ background:var(--stamp); }
+  @keyframes pulseDot{ 0%,100%{opacity:1;} 50%{opacity:.35;} }
 
   /* Stamp */
   .stamp{
@@ -120,7 +171,7 @@
   .chip{
     background: var(--white);
     border:1px solid var(--paper-line);
-    border-radius:10px;
+    border-radius:var(--radius-md);
     padding:9px 12px;
     font-size:13.5px;
     display:flex; align-items:center; gap:8px;
@@ -128,6 +179,7 @@
     transition: transform .12s ease, box-shadow .12s ease;
     box-shadow: 0 1px 0 var(--paper-line);
   }
+  .chip:hover{ box-shadow: 0 3px 8px rgba(31,59,50,0.10); transform: translateY(-1px); }
   .chip:active{transform: scale(0.96);}
   .chip .pts{
     font-family:'IBM Plex Mono', monospace;
@@ -146,24 +198,25 @@
   .custom-box{
     background: var(--white);
     border:1px solid var(--paper-line);
-    border-radius:12px;
+    border-radius:var(--radius-lg);
     padding:14px;
+    box-shadow: var(--shadow-card);
   }
   .custom-row{display:flex; gap:8px; margin-bottom:10px;}
   .custom-row input[type=text]{
     flex:1;
     border:1px solid var(--paper-line);
-    border-radius:8px;
+    border-radius:var(--radius-sm);
     padding:9px 10px;
     font-family:'Work Sans', sans-serif;
     font-size:13.5px;
   }
-  .stepper{display:flex; align-items:center; border:1px solid var(--paper-line); border-radius:8px; overflow:hidden;}
+  .stepper{display:flex; align-items:center; border:1px solid var(--paper-line); border-radius:var(--radius-sm); overflow:hidden;}
   .stepper button{
     border:none; background:var(--paper-dark); width:32px; height:38px; font-size:16px; cursor:pointer; color:var(--ink);
   }
   .stepper span{width:34px; text-align:center; font-family:'IBM Plex Mono',monospace; font-weight:600;}
-  .sign-toggle{display:flex; border:1px solid var(--paper-line); border-radius:8px; overflow:hidden;}
+  .sign-toggle{display:flex; border:1px solid var(--paper-line); border-radius:var(--radius-sm); overflow:hidden;}
   .sign-toggle button{
     border:none; background:var(--white); padding:0 12px; font-family:'IBM Plex Mono',monospace; font-weight:600; cursor:pointer; color:var(--ink-soft);
   }
@@ -174,20 +227,22 @@
     background: var(--ink);
     color: var(--white);
     border:none;
-    border-radius:8px;
+    border-radius:var(--radius-sm);
     padding:11px;
     font-family:'Work Sans', sans-serif;
     font-weight:600;
     font-size:14px;
     cursor:pointer;
+    transition: opacity .12s ease, transform .12s ease;
   }
-  .btn-add:active{opacity:.85;}
+  .btn-add:active{opacity:.85; transform: scale(0.99);}
 
   .ledger{
     background: var(--white);
     border:1px solid var(--paper-line);
-    border-radius:12px;
+    border-radius:var(--radius-lg);
     overflow:hidden;
+    box-shadow: var(--shadow-card);
   }
   .ledger .entry{
     display:flex; justify-content:space-between; align-items:center;
@@ -199,32 +254,76 @@
   .ledger .entry:last-child{border-bottom:none;}
   .entry .desc{flex:1;}
   .entry .desc .cat{
-    display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft); letter-spacing:.05em; text-transform:uppercase;
+    display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft); letter-spacing:.06em; text-transform:uppercase; margin-bottom:1px;
   }
-  .entry .pts{
+  .pts{
     font-family:'IBM Plex Mono', monospace;
     font-weight:600;
     white-space:nowrap;
   }
-  .entry .pts.pos{color:#2C6B3F;}
-  .entry .pts.neg{color:var(--stamp);}
+  .pts.pos{color:#2C6B3F;}
+  .pts.neg{color:var(--stamp);}
   .entry .del{
     background:none; border:none; color:#9AA9A2; cursor:pointer; font-size:15px; padding:0 2px;
+    transition: color .12s ease;
   }
+  .entry .del:hover{ color: var(--stamp); }
   .empty-ledger{padding:22px 14px; text-align:center; color:var(--ink-soft); font-size:13.5px;}
+
+  @keyframes entryIn{
+    from{ opacity:0; transform: translateY(-5px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+  .ledger .entry.entry-enter{ animation: entryIn .3s ease; }
+
+  /* Resgates anteriores */
+  .cashout-card{
+    background: var(--white);
+    border:1px solid var(--paper-line);
+    border-radius:var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    overflow:hidden;
+    margin-bottom:10px;
+  }
+  .cashout-card:last-child{ margin-bottom:0; }
+  .cashout-card summary{
+    list-style:none;
+    cursor:pointer;
+    padding:12px 14px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12.5px;
+    color: var(--ink-soft);
+  }
+  .cashout-card summary::-webkit-details-marker{ display:none; }
+  .cashout-card summary .arrow{
+    color: var(--ink-soft);
+    transition: transform .2s ease;
+    flex-shrink:0;
+  }
+  .cashout-card[open] summary .arrow{ transform: rotate(90deg); }
+  .cashout-card .accordion-body{
+    display:grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .3s ease;
+  }
+  .cashout-card[open] .accordion-body{ grid-template-rows: 1fr; }
+  .cashout-card .accordion-body > div{ overflow:hidden; }
+  .cashout-card .ledger{ border:none; border-top:1px solid var(--paper-line); border-radius:0; box-shadow:none; }
 
   .settings{
     background: var(--white);
     border:1px solid var(--paper-line);
-    border-radius:12px;
+    border-radius:var(--radius-lg);
     padding:14px;
+    box-shadow: var(--shadow-card);
   }
   .settings-row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;}
   .settings-row label{font-size:13.5px; color:var(--ink-soft);}
   .settings-row input{
-    width:90px;
+    width:clamp(70px, 22vw, 90px);
     border:1px solid var(--paper-line);
-    border-radius:8px;
+    border-radius:var(--radius-sm);
     padding:7px 9px;
     font-family:'IBM Plex Mono',monospace;
     font-size:13.5px;
@@ -235,17 +334,19 @@
     background: var(--gold);
     color: var(--ink);
     border:none;
-    border-radius:8px;
+    border-radius:var(--radius-sm);
     padding:11px;
     font-weight:600;
     font-size:14px;
     cursor:pointer;
+    transition: opacity .12s ease, transform .12s ease;
   }
+  .btn-cashout:active:not(:disabled){ transform: scale(0.99); }
   .btn-cashout:disabled{opacity:.45; cursor:not-allowed;}
   .hint{font-size:11.5px; color:var(--ink-soft); margin-top:8px; line-height:1.4;}
   .name-input{
     background:transparent; border:none; border-bottom:1px dashed #6E8A80;
-    color:var(--white); font-family:'Fraunces',serif; font-size:15px; padding:2px 0; width:160px;
+    color:var(--white); font-family:'Fraunces',serif; font-size:15px; padding:2px 0; width:clamp(110px, 40vw, 160px);
   }
   .name-input::placeholder{color:#9FBBAF;}
 
@@ -258,7 +359,9 @@
     justify-content:center;
     text-align:center;
     padding:24px;
+    transition: opacity .3s ease;
   }
+  #loginScreen.fade-out{ opacity:0; }
   #loginScreen h2{
     font-family:'Fraunces', serif;
     font-size:24px;
@@ -269,7 +372,7 @@
     display:flex; align-items:center; gap:10px;
     background:var(--white);
     border:1px solid var(--paper-line);
-    border-radius:10px;
+    border-radius:var(--radius-md);
     padding:12px 20px;
     font-family:'Work Sans', sans-serif;
     font-weight:600;
@@ -278,7 +381,8 @@
     box-shadow:0 1px 0 var(--paper-line);
   }
   .google-btn img{width:18px; height:18px;}
-  #appRoot{display:none;}
+  #appRoot{display:none; opacity:0; transition: opacity .35s ease;}
+  #appRoot.visible{ opacity:1; }
   .user-bar{
     display:flex; align-items:center; justify-content:space-between;
     max-width:600px; margin:0 auto; padding:8px 16px 0;
@@ -286,6 +390,12 @@
   }
   .user-bar button{
     background:none; border:none; color:var(--ink-soft); text-decoration:underline; cursor:pointer; font-size:12.5px;
+  }
+
+  @media (max-width:380px){
+    header.capa{ padding:22px 16px 26px; }
+    h1{ font-size:22px; }
+    .stamp, header.capa::after{ width:70px; height:70px; }
   }
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -303,13 +413,17 @@
 <header class="capa">
   <div class="stamp" id="stamp">GANHOU<br>PONTOS!</div>
   <div class="capa-inner">
-    <p class="eyebrow">caderneta de pontos</p>
+    <p class="eyebrow">
+      caderneta de pontos
+      <span class="save-status" id="saveStatus"><span class="dot"></span><span class="txt"></span></span>
+    </p>
     <h1>de <input class="name-input" id="childName" placeholder="nome da filha" /></h1>
     <div class="saldo-row">
       <div class="saldo-block">
         <div class="label">SALDO ATUAL</div>
         <div class="valor pontos" id="saldoPontos">0 pts</div>
       </div>
+      <span class="saldo-eq" aria-hidden="true">≈</span>
       <div class="saldo-block">
         <div class="label">EQUIVALE A</div>
         <div class="valor dinheiro" id="saldoDinheiro">R$ 0,00</div>
@@ -364,14 +478,21 @@
   </section>
 
   <section>
+    <h2>Resgates anteriores <span class="tag">histórico</span></h2>
+    <div id="cashouts">
+      <div class="empty-ledger">Nenhum resgate ainda.</div>
+    </div>
+  </section>
+
+  <section>
     <h2>Configurações</h2>
     <div class="settings">
       <div class="settings-row">
         <label>Valor de cada ponto (R$)</label>
         <input type="number" id="rateInput" step="0.01" min="0" value="0.20" />
       </div>
-      <button class="btn-cashout" id="cashoutBtn">Resgatar mesada e zerar pontos</button>
-      <p class="hint" id="lastCashout"></p>
+      <button class="btn-cashout" id="cashoutBtn">Resgatar mesada e mover para o histórico</button>
+      <p class="hint" id="cashoutHint"></p>
     </div>
   </section>
 
@@ -379,6 +500,9 @@
 </div>
 
 <script>
+// =========================================================
+// DADOS
+// =========================================================
 const TASKS = {
   casa: [
     {label:"Arrumar o quarto", pts:5},
@@ -425,7 +549,6 @@ const TASKS = {
 const CAT_LABEL = {casa:"Casa", escola:"Escola", comportamento:"Comportamento", manual:"Manual"};
 
 // ======= CONFIGURAÇÃO DO FIREBASE =======
-// Cole aqui as chaves que você copiou no passo 4 (Firebase Console > Configurações do projeto > Seus apps)
 const firebaseConfig = {
   apiKey: "AIzaSyATTRoVAPw4Ng1E6im45ckairXhnLz2ObM",
   authDomain: "caderneta-pontos.firebaseapp.com",
@@ -437,51 +560,167 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
-// ==========================================
-
-let state = { entries: [], rate: 0.20, childName: "", lastCashout: null };
-let customSign = 1;
-let customStep = 5;
-
 const SHARED_DOC_ID = "familia";
-
 function docRef(){
   return db.collection("caderneta").doc(SHARED_DOC_ID);
 }
 
-function applyRemoteState(data){
-  state = Object.assign({ entries: [], rate: 0.20, childName: "", lastCashout: null }, data || {});
-  document.getElementById("childName").value = state.childName || "";
-  document.getElementById("rateInput").value = state.rate;
-  render();
+// =========================================================
+// ESTADO LOCAL + CACHE DE ELEMENTOS
+// =========================================================
+let state = { entries: [], cashouts: [], rate: 0.20, childName: "" };
+let customSign = 1;
+let customStep = 5;
+let lastRenderedTotal = null;
+let firstRender = true;
+
+const el = {
+  loginScreen: document.getElementById("loginScreen"),
+  appRoot: document.getElementById("appRoot"),
+  stamp: document.getElementById("stamp"),
+  saveStatus: document.getElementById("saveStatus"),
+  childName: document.getElementById("childName"),
+  saldoPontos: document.getElementById("saldoPontos"),
+  saldoDinheiro: document.getElementById("saldoDinheiro"),
+  chips: {
+    casa: document.getElementById("chips-casa"),
+    escola: document.getElementById("chips-escola"),
+    comportamento: document.getElementById("chips-comportamento"),
+  },
+  customDesc: document.getElementById("customDesc"),
+  signToggle: document.getElementById("signToggle"),
+  stepVal: document.getElementById("stepVal"),
+  stepUp: document.getElementById("stepUp"),
+  stepDown: document.getElementById("stepDown"),
+  addCustom: document.getElementById("addCustom"),
+  ledger: document.getElementById("ledger"),
+  cashouts: document.getElementById("cashouts"),
+  cashoutHint: document.getElementById("cashoutHint"),
+  rateInput: document.getElementById("rateInput"),
+  cashoutBtn: document.getElementById("cashoutBtn"),
+};
+
+function makeId(){
+  return (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : (Date.now() + "-" + Math.random().toString(16).slice(2));
 }
 
-async function saveState(){
-  try{
-    await docRef().set(state);
-  }catch(e){
-    console.error("Falha ao salvar no Firestore:", e);
+function formatBRL(n){
+  return "R$ " + n.toFixed(2).replace(".", ",");
+}
+
+function todayStr(){
+  return new Date().toLocaleDateString("pt-BR");
+}
+
+// =========================================================
+// SALVAMENTO / STATUS DE SINCRONIZAÇÃO
+// =========================================================
+let saveStatusTimer = null;
+let saveWatchdog = null;
+
+function setSaveStatus(status){
+  clearTimeout(saveStatusTimer);
+  el.saveStatus.classList.remove("saving", "saved", "error", "show");
+  const label = { saving: "salvando…", saved: "salvo", error: "sem conexão — tentando…" }[status] || "";
+  el.saveStatus.querySelector(".txt").textContent = label;
+  if(status){
+    el.saveStatus.classList.add(status, "show");
+  }
+  if(status === "saved"){
+    saveStatusTimer = setTimeout(()=> el.saveStatus.classList.remove("show"), 1500);
   }
 }
 
-function startApp(){
-  document.getElementById("loginScreen").style.display = "none";
-  document.getElementById("appRoot").style.display = "block";
+function trackWrite(promise){
+  clearTimeout(saveWatchdog);
+  setSaveStatus("saving");
+  saveWatchdog = setTimeout(()=> setSaveStatus("error"), 6000);
+  return promise.then(()=>{
+    clearTimeout(saveWatchdog);
+    setSaveStatus("saved");
+  }).catch(err=>{
+    clearTimeout(saveWatchdog);
+    console.error("Falha ao salvar:", err);
+    setSaveStatus("error");
+  });
+}
 
-  // Sincronização em tempo real: qualquer mudança feita em outro aparelho aparece aqui sozinha
+// =========================================================
+// ESCRITAS NO FIRESTORE (uma operação mínima por ação, não
+// o documento inteiro — evita perder dados quando dois
+// aparelhos salvam ao mesmo tempo)
+// =========================================================
+function addEntryRemote(entry){
+  return docRef().set({ entries: firebase.firestore.FieldValue.arrayUnion(entry) }, { merge: true });
+}
+
+function removeEntryRemote(id){
+  return db.runTransaction(async (tx)=>{
+    const snap = await tx.get(docRef());
+    const data = snap.data() || {};
+    const entries = (data.entries || []).filter(e => e.id !== id);
+    tx.set(docRef(), { entries }, { merge: true });
+  });
+}
+
+function cashoutRemote(){
+  return db.runTransaction(async (tx)=>{
+    const snap = await tx.get(docRef());
+    const data = snap.data() || {};
+    const entries = data.entries || [];
+    const total = entries.reduce((sum, e)=> sum + e.pts, 0);
+    if(total <= 0) return;
+    const rate = typeof data.rate === "number" ? data.rate : state.rate;
+    const cashout = { id: makeId(), date: todayStr(), valor: total * rate, entries };
+    const cashouts = [cashout, ...(data.cashouts || [])];
+    tx.set(docRef(), { entries: [], cashouts }, { merge: true });
+  });
+}
+
+function updateSettingRemote(field, value){
+  return docRef().set({ [field]: value }, { merge: true });
+}
+
+// =========================================================
+// SINCRONIZAÇÃO / CARREGAMENTO
+// =========================================================
+function applyRemoteState(data){
+  const defaults = { entries: [], cashouts: [], rate: 0.20, childName: "" };
+  state = Object.assign({}, defaults, data || {});
+
+  // migração: versões antigas guardavam só o último resgate (lastCashout)
+  if((!state.cashouts || state.cashouts.length === 0) && data && data.lastCashout){
+    state.cashouts = [{
+      id: makeId(),
+      date: data.lastCashout.date,
+      valor: data.lastCashout.valor,
+      entries: [],
+    }];
+  }
+
+  el.childName.value = state.childName || "";
+  el.rateInput.value = state.rate;
+  render();
+}
+
+function startApp(){
+  el.loginScreen.classList.add("fade-out");
+  setTimeout(()=>{ el.loginScreen.style.display = "none"; }, 300);
+  el.appRoot.style.display = "block";
+  requestAnimationFrame(()=> el.appRoot.classList.add("visible"));
+
   docRef().onSnapshot(snap=>{
     if(snap.exists){
       applyRemoteState(snap.data());
     } else {
-      // Primeira vez: cria o documento compartilhado
       docRef().set(state);
     }
   }, err=>{
     console.error("Erro na sincronização:", err);
+    setSaveStatus("error");
   });
 }
 
-// Login anônimo no Firebase só pra satisfazer as regras de segurança do Firestore
 auth.signInAnonymously().then(()=>{
   startApp();
 }).catch(e=>{
@@ -490,138 +729,172 @@ auth.signInAnonymously().then(()=>{
     "Não foi possível conectar. Verifique se o login anônimo está ativado no Firebase.";
 });
 
+// =========================================================
+// RENDER
+// =========================================================
 function totalPontos(){
-  return state.entries.reduce((sum,e)=>sum+e.pts,0);
+  return state.entries.reduce((sum, e)=> sum + e.pts, 0);
+}
+
+function pulse(node){
+  node.classList.remove("pulse");
+  void node.offsetWidth;
+  node.classList.add("pulse");
 }
 
 function render(){
   const total = totalPontos();
-  document.getElementById("saldoPontos").textContent = total + " pts";
-  document.getElementById("saldoDinheiro").textContent =
-    "R$ " + (total * state.rate).toFixed(2).replace(".", ",");
+  el.saldoPontos.textContent = total + " pts";
+  el.saldoDinheiro.textContent = formatBRL(total * state.rate);
 
-  document.getElementById("cashoutBtn").disabled = total <= 0;
-
-  if(state.lastCashout){
-    document.getElementById("lastCashout").textContent =
-      "Último resgate: " + state.lastCashout.date + " · R$ " + state.lastCashout.valor.toFixed(2).replace(".", ",");
-  } else {
-    document.getElementById("lastCashout").textContent = "Nenhum resgate ainda.";
+  if(!firstRender && total !== lastRenderedTotal){
+    pulse(el.saldoPontos);
+    pulse(el.saldoDinheiro);
   }
+  lastRenderedTotal = total;
+  firstRender = false;
 
+  el.cashoutBtn.disabled = total <= 0;
+
+  renderCashoutHint();
   renderChips();
   renderLedger();
+  renderCashouts();
+}
+
+function renderCashoutHint(){
+  const n = (state.cashouts || []).length;
+  el.cashoutHint.textContent = n === 0
+    ? "Nenhum resgate ainda."
+    : `Você já resgatou ${n} ${n === 1 ? "vez" : "vezes"}. Veja o histórico acima.`;
 }
 
 function renderChips(){
   Object.keys(TASKS).forEach(cat=>{
-    const el = document.getElementById("chips-"+cat);
-    el.innerHTML = "";
+    const container = el.chips[cat];
+    container.innerHTML = "";
     TASKS[cat].forEach(t=>{
       const chip = document.createElement("div");
       chip.className = "chip";
       chip.innerHTML = `<span>${t.label}</span><span class="pts${t.pts < 0 ? " neg" : ""}">${t.pts >= 0 ? "+" : ""}${t.pts}</span>`;
       chip.addEventListener("click", ()=> addEntry(cat, t.label, t.pts));
-      el.appendChild(chip);
+      container.appendChild(chip);
     });
   });
 }
 
-function renderLedger(){
-  const ledgerEl = document.getElementById("ledger");
-  if(state.entries.length === 0){
-    ledgerEl.innerHTML = '<div class="empty-ledger">Nenhum registro ainda. Carimbe o primeiro ponto acima! ✳</div>';
-    return;
-  }
-  ledgerEl.innerHTML = "";
-  [...state.entries].reverse().forEach(e=>{
-    const row = document.createElement("div");
-    row.className = "entry";
-    const sign = e.pts >= 0 ? "pos" : "neg";
-    row.innerHTML = `
+function entryRowHtml(e, removable){
+  const sign = e.pts >= 0 ? "pos" : "neg";
+  return `
+    <div class="entry">
       <div class="desc"><span class="cat">${CAT_LABEL[e.cat] || "Manual"} · ${e.date}</span>${e.label}</div>
       <div class="pts ${sign}">${e.pts >= 0 ? "+" : ""}${e.pts}</div>
-      <button class="del" data-id="${e.id}" title="Remover">✕</button>
-    `;
-    row.querySelector(".del").addEventListener("click", ()=> removeEntry(e.id));
-    ledgerEl.appendChild(row);
-  });
+      ${removable ? `<button class="del" data-id="${e.id}" title="Remover">✕</button>` : ""}
+    </div>`;
 }
 
-function todayStr(){
-  const d = new Date();
-  return d.toLocaleDateString("pt-BR");
+function renderLedger(){
+  if(state.entries.length === 0){
+    el.ledger.innerHTML = '<div class="empty-ledger">Nenhum registro ainda. Carimbe o primeiro ponto acima! ✳</div>';
+    return;
+  }
+  el.ledger.innerHTML = [...state.entries].reverse().map(e => entryRowHtml(e, true)).join("");
+  const first = el.ledger.querySelector(".entry");
+  if(first) first.classList.add("entry-enter");
+}
+
+function renderCashouts(){
+  const cashouts = state.cashouts || [];
+  if(cashouts.length === 0){
+    el.cashouts.innerHTML = '<div class="empty-ledger">Nenhum resgate ainda.</div>';
+    return;
+  }
+  el.cashouts.innerHTML = cashouts.map(c => `
+    <details class="cashout-card">
+      <summary>
+        <span>${c.date} · ${c.entries.length} registro(s)</span>
+        <span class="pts pos">${formatBRL(c.valor)}</span>
+        <span class="arrow">›</span>
+      </summary>
+      <div class="accordion-body"><div>
+        <div class="ledger">${c.entries.map(e => entryRowHtml(e, false)).join("")}</div>
+      </div></div>
+    </details>
+  `).join("");
 }
 
 function playStamp(){
-  const stamp = document.getElementById("stamp");
-  stamp.classList.remove("play");
-  void stamp.offsetWidth; // restart animation
-  stamp.classList.add("play");
+  el.stamp.classList.remove("play");
+  void el.stamp.offsetWidth; // restart animation
+  el.stamp.classList.add("play");
 }
 
+// =========================================================
+// AÇÕES
+// =========================================================
 function addEntry(cat, label, pts){
-  state.entries.push({id: Date.now()+Math.random(), cat, label, pts, date: todayStr()});
-  saveState();
-  render();
+  const entry = { id: makeId(), cat, label, pts, date: todayStr() };
+  trackWrite(addEntryRemote(entry));
   if(pts > 0) playStamp();
 }
 
 function removeEntry(id){
-  state.entries = state.entries.filter(e=> e.id !== id);
-  saveState();
-  render();
+  trackWrite(removeEntryRemote(id));
 }
 
-document.getElementById("addCustom").addEventListener("click", ()=>{
-  const desc = document.getElementById("customDesc").value.trim();
-  if(!desc) return;
-  const pts = customSign * customStep;
-  addEntry("manual", desc, pts);
-  document.getElementById("customDesc").value = "";
-});
-
-document.getElementById("signToggle").addEventListener("click", (ev)=>{
-  const btn = ev.target.closest("button");
-  if(!btn) return;
-  customSign = parseInt(btn.dataset.sign, 10);
-  document.querySelectorAll("#signToggle button").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-});
-
-document.getElementById("stepUp").addEventListener("click", ()=>{
-  customStep = Math.min(50, customStep+1);
-  document.getElementById("stepVal").textContent = customStep;
-});
-document.getElementById("stepDown").addEventListener("click", ()=>{
-  customStep = Math.max(1, customStep-1);
-  document.getElementById("stepVal").textContent = customStep;
-});
-
-document.getElementById("rateInput").addEventListener("change", (ev)=>{
-  const v = parseFloat(ev.target.value);
-  state.rate = isNaN(v) ? 0 : v;
-  saveState();
-  render();
-});
-
-document.getElementById("childName").addEventListener("change", (ev)=>{
-  state.childName = ev.target.value;
-  saveState();
-});
-
-document.getElementById("cashoutBtn").addEventListener("click", ()=>{
+function cashout(){
   const total = totalPontos();
   if(total <= 0) return;
   const valor = total * state.rate;
-  if(!confirm(`Resgatar ${total} pontos = R$ ${valor.toFixed(2).replace(".",",")} e zerar o saldo?`)) return;
-  state.entries = [];
-  state.lastCashout = { date: todayStr(), valor };
-  saveState();
-  render();
+  if(!confirm(`Resgatar ${total} pontos = ${formatBRL(valor)} e mover para o histórico?`)) return;
+  trackWrite(cashoutRemote());
+}
+
+// =========================================================
+// EVENTOS
+// =========================================================
+el.ledger.addEventListener("click", (ev)=>{
+  const btn = ev.target.closest(".del");
+  if(!btn) return;
+  removeEntry(btn.dataset.id);
 });
 
-// O carregamento dos dados agora acontece automaticamente em onAuthStateChanged, acima.
+el.addCustom.addEventListener("click", ()=>{
+  const desc = el.customDesc.value.trim();
+  if(!desc) return;
+  const pts = customSign * customStep;
+  addEntry("manual", desc, pts);
+  el.customDesc.value = "";
+});
+
+el.signToggle.addEventListener("click", (ev)=>{
+  const btn = ev.target.closest("button");
+  if(!btn) return;
+  customSign = parseInt(btn.dataset.sign, 10);
+  el.signToggle.querySelectorAll("button").forEach(b=> b.classList.remove("active"));
+  btn.classList.add("active");
+});
+
+el.stepUp.addEventListener("click", ()=>{
+  customStep = Math.min(50, customStep + 1);
+  el.stepVal.textContent = customStep;
+});
+el.stepDown.addEventListener("click", ()=>{
+  customStep = Math.max(1, customStep - 1);
+  el.stepVal.textContent = customStep;
+});
+
+el.rateInput.addEventListener("change", (ev)=>{
+  const v = parseFloat(ev.target.value);
+  const rate = isNaN(v) ? 0 : v;
+  trackWrite(updateSettingRemote("rate", rate));
+});
+
+el.childName.addEventListener("change", (ev)=>{
+  trackWrite(updateSettingRemote("childName", ev.target.value));
+});
+
+el.cashoutBtn.addEventListener("click", cashout);
 </script>
 
 </body>
