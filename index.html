@@ -21,6 +21,10 @@
     --wine-soft: #F0E0E8;
     --gold: #C9A15A;
     --gold-soft: #F1E3C4;
+    --pos: #2E9C8F;
+    --pos-soft: #D7EEEA;
+    --neg: #D9714F;
+    --neg-soft: #F6E0D6;
     --white: #FFFFFF;
     --radius-sm: 8px;
     --radius-md: 10px;
@@ -211,15 +215,15 @@
   .chip .pts{
     font-family:'IBM Plex Mono', monospace;
     font-weight:600;
-    color: var(--rose);
-    background: var(--rose-soft);
+    color: var(--pos);
+    background: var(--pos-soft);
     padding:2px 6px;
     border-radius:6px;
     font-size:12px;
   }
   .chip .pts.neg{
-    color: var(--wine);
-    background: var(--wine-soft);
+    color: var(--neg);
+    background: var(--neg-soft);
   }
 
   .custom-box{
@@ -247,8 +251,8 @@
   .sign-toggle button{
     border:none; background:var(--white); padding:0 12px; font-family:'IBM Plex Mono',monospace; font-weight:600; cursor:pointer; color:var(--ink-soft);
   }
-  .sign-toggle button.active.plus{background:var(--rose-soft); color:var(--rose);}
-  .sign-toggle button.active.minus{background:var(--wine-soft); color:var(--wine);}
+  .sign-toggle button.active.plus{background:var(--pos-soft); color:var(--pos);}
+  .sign-toggle button.active.minus{background:var(--neg-soft); color:var(--neg);}
   .btn-add{
     width:100%;
     background: var(--lilac);
@@ -265,33 +269,45 @@
   .btn-add:active{opacity:.85; transform: scale(0.99);}
 
   .ledger{
-    background: var(--white);
+    background-color: var(--white);
+    background-image: repeating-linear-gradient(var(--white) 0px, var(--white) 26px, var(--paper-line) 27px);
     border:1px solid var(--paper-line);
     border-radius:var(--radius-lg);
     overflow:hidden;
     box-shadow: var(--shadow-card);
   }
   .ledger .entry{
-    display:flex; justify-content:space-between; align-items:center;
-    padding:11px 14px;
-    border-bottom:1px solid var(--paper-line);
+    display:flex; justify-content:space-between; align-items:flex-end;
+    height:54px;
+    padding:0 14px;
     font-size:13.5px;
     gap:10px;
+    overflow:hidden;
   }
-  .ledger .entry:last-child{border-bottom:none;}
-  .entry .desc{flex:1;}
+  .entry .desc{flex:1; min-width:0;}
   .entry .desc .cat{
-    display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft); letter-spacing:.06em; text-transform:uppercase; margin-bottom:1px;
+    display:block; font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--ink-soft); letter-spacing:.06em; text-transform:uppercase; margin:8px 0 3px;
+  }
+  .entry .desc .label{
+    display:inline-block;
+    max-width:100%;
+    font-family:'Patrick Hand', cursive;
+    font-size:18px;
+    color: var(--ink);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    line-height:1;
+    transform-origin: left bottom;
   }
   .pts{
     font-family:'IBM Plex Mono', monospace;
     font-weight:600;
     white-space:nowrap;
+    padding-bottom:2px;
   }
-  .pts.pos{color:var(--rose);}
-  .pts.neg{color:var(--wine);}
+  .pts.pos{color:var(--pos);}
+  .pts.neg{color:var(--neg);}
   .entry .del{
-    background:none; border:none; color:#B8A7BE; cursor:pointer; font-size:15px; padding:0 2px;
+    background:none; border:none; color:#B8A7BE; cursor:pointer; font-size:15px; padding:0 2px 2px;
     transition: color .12s ease;
   }
   .entry .del:hover{ color: var(--wine); }
@@ -1007,11 +1023,14 @@ function renderChips(){
   });
 }
 
-function entryRowHtml(e, removable){
+const LABEL_TILTS = [-1.1, 0.6, -0.4, 0.9, -0.7, 0.3];
+
+function entryRowHtml(e, removable, index){
   const sign = e.pts >= 0 ? "pos" : "neg";
+  const tilt = LABEL_TILTS[index % LABEL_TILTS.length];
   return `
     <div class="entry">
-      <div class="desc"><span class="cat">${CAT_LABEL[e.cat] || "Manual"} · ${e.date}</span>${e.label}</div>
+      <div class="desc"><span class="cat">${CAT_LABEL[e.cat] || "Manual"} · ${e.date}</span><span class="label" style="transform:rotate(${tilt}deg)">${e.label}</span></div>
       <div class="pts ${sign}">${e.pts >= 0 ? "+" : ""}${e.pts}</div>
       ${removable ? `<button class="del" data-id="${e.id}" title="Remover">✕</button>` : ""}
     </div>`;
@@ -1022,7 +1041,7 @@ function renderLedger(){
     el.ledger.innerHTML = '<div class="empty-ledger">Nenhum registro ainda. Carimbe o primeiro ponto acima! ✳</div>';
     return;
   }
-  el.ledger.innerHTML = [...state.entries].reverse().map(e => entryRowHtml(e, true)).join("");
+  el.ledger.innerHTML = [...state.entries].reverse().map((e, i) => entryRowHtml(e, true, i)).join("");
   const first = el.ledger.querySelector(".entry");
   if(first) first.classList.add("entry-enter");
 }
@@ -1044,7 +1063,7 @@ function renderCashouts(){
         </span>
       </summary>
       <div class="accordion-body"><div>
-        <div class="ledger">${c.entries.map(e => entryRowHtml(e, false)).join("")}</div>
+        <div class="ledger">${c.entries.map((e, i) => entryRowHtml(e, false, i)).join("")}</div>
       </div></div>
     </details>
   `).join("");
