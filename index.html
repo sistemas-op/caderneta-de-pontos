@@ -296,6 +296,18 @@
     color: var(--ink-soft);
   }
   .cashout-card summary::-webkit-details-marker{ display:none; }
+  .cashout-card summary .cashout-info{
+    flex:1; min-width:0;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .cashout-card summary .cashout-right{
+    display:flex; align-items:center; gap:10px; flex-shrink:0;
+  }
+  .cashout-card summary .del-cashout{
+    background:none; border:none; color:#9AA9A2; cursor:pointer; font-size:14px; padding:0 2px;
+    transition: color .12s ease;
+  }
+  .cashout-card summary .del-cashout:hover{ color: var(--stamp); }
   .cashout-card summary .arrow{
     color: var(--ink-soft);
     transition: transform .2s ease;
@@ -663,6 +675,15 @@ function removeEntryRemote(id){
   });
 }
 
+function deleteCashoutRemote(id){
+  return db.runTransaction(async (tx)=>{
+    const snap = await tx.get(docRef());
+    const data = snap.data() || {};
+    const cashouts = (data.cashouts || []).filter(c => c.id !== id);
+    tx.set(docRef(), { cashouts }, { merge: true });
+  });
+}
+
 function cashoutRemote(){
   return db.runTransaction(async (tx)=>{
     const snap = await tx.get(docRef());
@@ -688,19 +709,24 @@ function applyRemoteState(data){
   const defaults = { entries: [], cashouts: [], rate: 0.20, childName: "" };
   state = Object.assign({}, defaults, data || {});
 
-  // migração: versões antigas guardavam só o último resgate (lastCashout)
-  if((!state.cashouts || state.cashouts.length === 0) && data && data.lastCashout){
-    state.cashouts = [{
-      id: makeId(),
-      date: data.lastCashout.date,
-      valor: data.lastCashout.valor,
-      entries: [],
-    }];
-  }
-
   el.childName.value = state.childName || "";
   el.rateInput.value = state.rate;
   render();
+
+  // migração: versões antigas guardavam só o último resgate (lastCashout).
+  // Persistimos como um cashout de verdade (com id estável) para que ele
+  // apareça no histórico e possa ser editado/excluído como qualquer outro.
+  if((!data?.cashouts || data.cashouts.length === 0) && data?.lastCashout){
+    migrateLastCashout(data.lastCashout);
+  }
+}
+
+function migrateLastCashout(lastCashout){
+  const cashout = { id: makeId(), date: lastCashout.date, valor: lastCashout.valor, entries: [] };
+  docRef().set({
+    cashouts: firebase.firestore.FieldValue.arrayUnion(cashout),
+    lastCashout: firebase.firestore.FieldValue.delete(),
+  }, { merge: true }).catch(err => console.error("Falha ao migrar histórico antigo:", err));
 }
 
 function startApp(){
@@ -812,9 +838,12 @@ function renderCashouts(){
   el.cashouts.innerHTML = cashouts.map(c => `
     <details class="cashout-card">
       <summary>
-        <span>${c.date} · ${c.entries.length} registro(s)</span>
-        <span class="pts pos">${formatBRL(c.valor)}</span>
-        <span class="arrow">›</span>
+        <span class="cashout-info">${c.date} · ${c.entries.length} registro(s)</span>
+        <span class="cashout-right">
+          <span class="pts pos">${formatBRL(c.valor)}</span>
+          <button type="button" class="del-cashout" data-id="${c.id}" title="Excluir resgate">✕</button>
+          <span class="arrow">›</span>
+        </span>
       </summary>
       <div class="accordion-body"><div>
         <div class="ledger">${c.entries.map(e => entryRowHtml(e, false)).join("")}</div>
@@ -850,6 +879,13 @@ function cashout(){
   trackWrite(cashoutRemote());
 }
 
+function deleteCashout(id){
+  const record = (state.cashouts || []).find(c => c.id === id);
+  if(!record) return;
+  if(!confirm(`Excluir o resgate de ${record.date} (${formatBRL(record.valor)})? Essa ação não pode ser desfeita.`)) return;
+  trackWrite(deleteCashoutRemote(id));
+}
+
 // =========================================================
 // EVENTOS
 // =========================================================
@@ -857,6 +893,14 @@ el.ledger.addEventListener("click", (ev)=>{
   const btn = ev.target.closest(".del");
   if(!btn) return;
   removeEntry(btn.dataset.id);
+});
+
+el.cashouts.addEventListener("click", (ev)=>{
+  const btn = ev.target.closest(".del-cashout");
+  if(!btn) return;
+  ev.preventDefault();  // não deixa o clique também abrir/fechar o <details>
+  ev.stopPropagation();
+  deleteCashout(btn.dataset.id);
 });
 
 el.addCustom.addEventListener("click", ()=>{
